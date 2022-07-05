@@ -16,7 +16,22 @@ export const TopMenu = () => {
   let navigate = useNavigate();
   const { auth } = useContext(Context);
   const [user] = useAuthState(auth);
-  const name = user.displayName.split(' ')[0];
+
+  const name = (function(){
+    if(user.displayName === null){
+      return user.email.split('@')[0];
+    }
+    else{
+      try{
+        return user.displayName.split(' ')[0];
+      }
+      catch{
+        return user.displayName;
+      }
+    }
+  })();
+
+  
 
   return (
     <Box
@@ -59,7 +74,7 @@ export const TopMenu = () => {
         >
           <Avatar
             alt="User" 
-            src={user.photoURL} 
+            src={user?.photoURL} 
             sx={{ bgcolor: "gray", marginRight: "10px", width: 24, height: 24 }}
           />
           

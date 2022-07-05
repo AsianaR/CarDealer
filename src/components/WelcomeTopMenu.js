@@ -9,14 +9,26 @@ import { Box } from "@mui/system";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Context } from "..";
 
-
 export const WelcomeTopMenu = () => {
   
   const { auth } = useContext(Context);
   const [user] = useAuthState(auth);
-  console.log(user);
-  const name = user.displayName.split(' ')[0];
-  const surname = user.displayName.split(' ')[1];
+  
+  const name = (function(){
+    if(user.displayName === null){
+      return user.email.split('@')[0];
+    }
+    else{
+      try{
+        return user.displayName.split(' ')[0];
+      }
+      catch{
+        return user.displayName;
+      }
+    }
+  })();
+
+  const avatar = (user.photoURL===null) ? null : user.photoURL; 
 
   return (
     <Box
