@@ -1,4 +1,5 @@
 import React from "react";
+import { useContext } from "react";
 import Search from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
 import Avatar from "@mui/material/Avatar";
@@ -7,10 +8,16 @@ import {useNavigate} from 'react-router-dom';
 import { CardMedia } from "@mui/material";
 import { styled, alpha } from "@mui/material/styles";
 import { Box } from "@mui/system";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { Context } from "..";
 import logo from '../assets/logo.jpg';
 
 export const TopMenu = () => {
   let navigate = useNavigate();
+  const { auth } = useContext(Context);
+  const [user] = useAuthState(auth);
+  const name = user.displayName.split(' ')[0];
+
   return (
     <Box
       sx={{
@@ -52,13 +59,12 @@ export const TopMenu = () => {
         >
           <Avatar
             alt="User" 
-            src={require("../assets/avatar.jpg")} 
+            src={user.photoURL} 
             sx={{ bgcolor: "gray", marginRight: "10px", width: 24, height: 24 }}
           />
           
           <Typography variant="BUTTON TEXT" color="#bdbdbd">
-            {" "}
-            Enzo
+            {name}
           </Typography>
         </Box>
       </Box>

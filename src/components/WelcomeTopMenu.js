@@ -1,12 +1,23 @@
 import React from "react";
+import { useContext } from "react";
 import Search from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
 import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import { styled, alpha } from "@mui/material/styles";
 import { Box } from "@mui/system";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { Context } from "..";
+
 
 export const WelcomeTopMenu = () => {
+  
+  const { auth } = useContext(Context);
+  const [user] = useAuthState(auth);
+  console.log(user);
+  const name = user.displayName.split(' ')[0];
+  const surname = user.displayName.split(' ')[1];
+
   return (
     <Box
       sx={{
@@ -20,7 +31,7 @@ export const WelcomeTopMenu = () => {
       }}
     >
       <Box>
-        <Typography variant="h5"> Welcome, Enzo!</Typography>
+        <Typography variant="h5"> Welcome, {name}!</Typography>
         <Typography variant="hint" color="#bdbdbd">
           {" "}
           This is whats happend with market
@@ -47,13 +58,12 @@ export const WelcomeTopMenu = () => {
         >
           <Avatar
             alt="User" 
-            src={require("../assets/avatar.jpg")} 
+            src={user.photoURL} 
             sx={{ bgcolor: "gray", marginRight: "10px", width: 24, height: 24 }}
           />
           
           <Typography variant="BUTTON TEXT" color="#bdbdbd">
-            {" "}
-            Enzo
+            {name}
           </Typography>
         </Box>
       </Box>

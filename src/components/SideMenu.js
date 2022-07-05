@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -7,7 +7,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 import Box from "@mui/material/Box";
 import CardMedia from "@mui/material/CardMedia";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.jpg";
 import {
   Dashboard,
@@ -19,9 +19,12 @@ import {
   Logout,
 } from "@mui/icons-material";
 import Container from "@mui/system/Container";
+import { signOut } from "firebase/auth";
+import { Context } from "..";
 
 export const SideMenu = () => {
-  let navigate = useNavigate()
+  const {auth} = useContext(Context);
+  let navigate = useNavigate();
   return (
     <Drawer
       anchor="left"
@@ -32,7 +35,7 @@ export const SideMenu = () => {
         <CardMedia
           image={logo}
           sx={{ height: 110, marginTop: "25px", width: 240 }}
-          onClick={() => navigate('/')}
+          onClick={() => navigate("/")}
         />
 
         <Box sx={{ marginTop: 5 }}>
@@ -43,7 +46,11 @@ export const SideMenu = () => {
               ["Blog", <Search />],
               ["Sell", <ShoppingCart />],
             ].map((couple, index) => (
-              <ListItem key={index} disablePadding onClick={() => navigate(`/${couple[0].toLowerCase()}`)}>
+              <ListItem
+                key={index}
+                disablePadding
+                onClick={() => navigate(`/${couple[0].toLowerCase()}`)}
+              >
                 <ListItemButton>
                   {couple[1]}
                   <ListItemText primary={couple[0]} sx={{ marginLeft: 2 }} />
@@ -60,15 +67,28 @@ export const SideMenu = () => {
             {[
               ["Profile", <AccountCircle />],
               ["About", <Info />],
-              ["Logout", <Logout />],
             ].map((couple, index) => (
-              <ListItem key={index} disablePadding onClick={() => navigate(`/${couple[0].toLowerCase()}`)}>
+              <ListItem
+                key={index}
+                disablePadding
+                onClick={() => navigate(`/${couple[0].toLowerCase()}`)}
+              >
                 <ListItemButton>
                   {couple[1]}
                   <ListItemText primary={couple[0]} sx={{ marginLeft: 2 }} />
                 </ListItemButton>
               </ListItem>
             ))}
+
+            <ListItem
+              disablePadding
+              onClick={() => signOut(auth)}
+            >
+              <ListItemButton>
+                <Logout/>
+                <ListItemText primary={"Logout"} sx={{ marginLeft: 2 }} />
+              </ListItemButton>
+            </ListItem>
           </List>
         </Box>
       </Container>

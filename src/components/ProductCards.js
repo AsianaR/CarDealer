@@ -36,7 +36,7 @@ export const ProductCards = () => {
             position: "relative",
             marginBottom: "30px",
           }}
-          onClick={() => navigate(`/${'231'}`)}
+          onClick={() => navigate(`/vehicle/${'231'}`)}
         >
           <CardActionArea>
             <Box sx={{ position: "absolute", top: "5px", width: "100%" }}>
