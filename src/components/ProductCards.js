@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { CardActionArea, Divider } from "@mui/material";
 import {useNavigate} from 'react-router-dom';
+import { collection, query, getDocs } from "firebase/firestore";
 import { styled } from "@mui/material/styles";
 import {
   AttachMoney,
@@ -15,10 +16,29 @@ import {
   Speed,
   Star,
 } from "@mui/icons-material";
+import { Context } from "..";
 import porsche from "../assets/porsche911.jpg";
 
 export const ProductCards = () => {
   let navigate = useNavigate();
+  const {db} = useContext(Context);
+
+  const [propertyData, setPropertyData] = useState([]);
+  
+  const getPropertyData = async () => {
+    const q = query(collection(db, "car"));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      setPropertyData([...propertyData, doc.data()]);
+    });
+  }
+
+  useEffect(() => {
+    getPropertyData();
+  }, [])
+
+
   return (
     <Box
       sx={{
@@ -28,7 +48,7 @@ export const ProductCards = () => {
         flexWrap: "wrap",
       }}
     >
-      {["1", "2", "3", "4", "1", "2", "3", "4"].map((text) => (
+      {propertyData.map((item, index) => (
         <Card
           sx={{
             maxWidth: 300,
@@ -36,13 +56,14 @@ export const ProductCards = () => {
             position: "relative",
             marginBottom: "30px",
           }}
-          onClick={() => navigate(`/vehicle/${'231'}`)}
+          key={index}
+          onClick={() => navigate(`/vehicle/${item?.id}`)}
         >
           <CardActionArea>
             <Box sx={{ position: "absolute", top: "5px", width: "100%" }}>
               <Button size="small" sx={{ color: "#c0c0c0" }}>
                 <Star />
-                4.7
+                {item?.Rating}
               </Button>
               <Button size="small" sx={{ float: "right", color: "#c0c0c0" }}>
                 <CreditCard />
@@ -56,7 +77,7 @@ export const ProductCards = () => {
             />
             <CardContent>
               <Typography gutterBottom variant="h5" component="div">
-                Porsche 911 Turbo S
+                {`${item?.Brand} ${item?.Model}`}
               </Typography>
               <Divider />
               <Box
@@ -69,16 +90,16 @@ export const ProductCards = () => {
               >
                 <StyledBox>
                   <Speed />
-                  <StyledTypography variant="caption">580hp</StyledTypography>
+                  <StyledTypography variant="caption">{item?.Hp}hp</StyledTypography>
                 </StyledBox>
                 <StyledBox>
                   <CalendarToday />
-                  <StyledTypography variant="caption">2022</StyledTypography>
+                  <StyledTypography variant="caption">{item?.Release}</StyledTypography>
                 </StyledBox>
                 <StyledBox>
                   <AttachMoney />
                   <StyledTypography variant="caption">
-                    1200/Day
+                    {item?.Price}/Day
                   </StyledTypography>
                 </StyledBox>
               </Box>

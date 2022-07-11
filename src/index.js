@@ -1,6 +1,6 @@
 import React, { createContext } from "react";
 import ReactDOM from "react-dom/client";
-import App from "./components/App";
+import App from "./App";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";

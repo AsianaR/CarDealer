@@ -1,15 +1,16 @@
 import { useContext } from "react";
 import { Routes, Route } from "react-router-dom";
-import { Context } from "..";
-import { BlogPage } from "../pages/BlogPage";
-import { LoginPage } from "../pages/LoginPage";
-import { ProductPage } from "../pages/ProductPage";
-import { PropertyPage } from "../pages/PropertyPage";
-import { SignupPage } from "../pages/SignupPage";
-import { NotFound } from "../pages/404";
-import { DashboardPage } from "../pages/DashboardPage";
+import { Context } from ".";
+import { BlogPage } from "./pages/BlogPage";
+import { LoginPage } from "./pages/LoginPage";
+import { ProductPage } from "./pages/ProductPage";
+import { PropertyPage } from "./pages/PropertyPage";
+import { SignupPage } from "./pages/SignupPage";
+import { NotFound } from "./pages/404";
+import { DashboardPage } from "./pages/DashboardPage";
 
 import { useAuthState } from "react-firebase-hooks/auth";
+import { SellPage } from "./pages/SellPage";
 
 function App() {
   const { auth } = useContext(Context);
@@ -31,6 +32,7 @@ function App() {
       <Route path="dashboard" element={<DashboardPage />} />
       <Route path="property" element={<PropertyPage />} />
       <Route path="blog" element={<BlogPage />} />
+      <Route path="sell" element={<SellPage />} />
 
       <Route path="vehicle/:productId" element={<ProductPage />} />
     </Routes>

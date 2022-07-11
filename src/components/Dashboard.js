@@ -1,15 +1,48 @@
-import React from "react";
+import React, {useState, useEffect, useContext} from "react";
 import { Box } from "@mui/system";
 import { Container, styled, Typography } from "@mui/material";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import CardActionArea from "@mui/material/CardActionArea";
-import porsche from "../assets/porsche911.jpg";
+
+import { collection, query, where, getDocs } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { Context } from "..";
+import porsche from "../assets/porsche911.jpg";
 
 export const Dashboard = () => {
   let navigate = useNavigate();
+  const { db } = useContext(Context);
+  
+  const [blogData, setBlogData] = useState([]);
+  const [propertyData, setPropertyData] = useState([]);
+  
+  const getBlogData = async () => {
+    const q = query(collection(db, "blog"));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      setBlogData([...blogData, doc.data()]);
+    });
+  }
+
+  const getPropertyData = async () => {
+    const q = query(collection(db, "car"));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      setPropertyData([...propertyData, doc.data()]);
+    });
+  }
+
+
+  useEffect(() => {
+    getBlogData();
+    getPropertyData();
+  }, [])
+
+  
   return (
     <Container sx={{ display: "flex", flexDirection: "column", paddingBottom: '50px' }}>
     <Typography variant="h3">Property</Typography>
@@ -23,24 +56,24 @@ export const Dashboard = () => {
           marginBottom: '80px'
         }}
       >
-          {[1, 2, 3].map((item, index) => (
+          {propertyData.map((item, index) => (
             <Card
+              key={index}
               sx={{
                 maxWidth: 400,
                 width: "30%",
               }}
-              onClick={() => navigate(`/vehicle/${"231"}`)}
+              onClick={() => navigate(`/vehicle/${item?.id}`)}
             >
               <CardActionArea>
                 <CardMedia
                   component="img"
                   alt="Product image"
-                  maxHeight="300"
                   image={porsche}
                 />
                 <CardContent>
                   <Typography gutterBottom variant="caption" component="div">
-                    Porsche 911 Turbo S
+                    {`${item?.Brand} ${item?.Model}`}
                   </Typography>
                 </CardContent>
               </CardActionArea>
@@ -51,8 +84,8 @@ export const Dashboard = () => {
 
       <Typography variant="h3">Blog</Typography>
       <Box sx={{ display: "flex", justifyContent: 'space-between' , marginTop: '30px' }}>
-      {[1, 2, 3].map((item, index) => (
-        <Box sx={{ height: "40vh", width: "30%", }}>
+      {blogData.map((item, index) => (
+        <Box sx={{ height: "40vh", width: "30%", }} key={index}>
           <CardMedia
             component="img"
             height="200"
@@ -61,14 +94,10 @@ export const Dashboard = () => {
             sx={{ borderRadius: 0.75, marginBottom: "15px" }}
           />
           <Typography>
-            Powerful electrifying performance, engineered to meet every
-            challenge.
+            {item?.Headline}
           </Typography>
           <Typography variant="caption" color="#cdcdcd">
-            Elit enim dolore veniam qui duis ut non ad reprehenderit nulla
-            laboris incididunt consequat laborum. Anim occaecat nostrud sunt ad
-            laborum proident pariatur id eu duis nulla aliquip. Exercitation
-            nulla non aute eiusmod esse pariatur ut deserunt pariatur.
+            {item?.Content}
           </Typography>
         </Box>
         ))}

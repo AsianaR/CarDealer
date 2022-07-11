@@ -1,13 +1,32 @@
-import React from "react";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
+import React, { useContext, useEffect, useState } from "react";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import { Avatar, ButtonBase } from "@mui/material";
 import { Box } from "@mui/system";
-import { Button } from "@mui/material";
+import { collection, query, getDocs } from "firebase/firestore";
+import { Context } from "..";
+
 
 export const BlogPost = () => {
+  const { db } = useContext(Context);
+  const [blogData, setBlogData] = useState([]);
+
+  
+  const getBlogData = async () => {
+    const q = query(collection(db, "blog"));
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      setBlogData([...blogData, doc.data()]);
+    });
+  }
+
+
+  useEffect(() => {
+    getBlogData();
+  }, [])
+
+
   return (
     <Box
       sx={{
@@ -19,7 +38,7 @@ export const BlogPost = () => {
         marginTop: "25px",
       }}
     >
-      {[1, 2, 3, 4].map((item, index) => (
+      {blogData.map((item, index) => (
         <Box
           sx={{
             width: "100%",
@@ -41,15 +60,10 @@ export const BlogPost = () => {
           />
           <Box sx={{ marginLeft: "40px", paddingTop: "10px" }}>
             <Typography variant="h5">
-              Powerful electrifying performance, engineered to meet every
-              challenge.
+              {item?.Headline}
             </Typography>
             <Typography variant="caption" color="#cdcdcd">
-              Elit enim dolore veniam qui duis ut non ad reprehenderit nulla
-              laboris incididunt consequat laborum. Anim occaecat nostrud sunt
-              ad laborum proident pariatur id eu duis nulla aliquip.
-              Exercitation nulla non aute eiusmod esse pariatur ut deserunt
-              pariatur.
+              {item?.Content}
             </Typography>
             <ButtonBase variant="outline" sx={{ width: "100px" }}>
               Read more
@@ -67,8 +81,7 @@ export const BlogPost = () => {
               }}
             >
               <Typography variant="BUTTON TEXT" color="#bdbdbd">
-                {" "}
-                Enzo
+                {item?.Author}
               </Typography>
 
               <Avatar
